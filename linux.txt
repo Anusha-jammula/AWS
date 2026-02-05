@@ -1,0 +1,418 @@
+
+
+linux : Opensource OS designed based on Unix architecture.
+
+linux torwalds
+
+Open Source : Free to use, Free modify, free to distribute.. 
+Security : Reobust security against malwares, viruses due to strong permissions and active community updates.
+Servers, Databases and mission critical worklaods i.e; satilites..
+Cost : No licensing fees
+Cross-Platform : it can run on various hardware configurations.. embedded devices / supercomputers.. 
+
+Linux Distributions:
+
+general usage : ubuntu, fedora, linux mint, Debian
+Enterprise : RHEL (redhat enterprise linux), SUSE linux, Oracle Linux
+Community : CentOS, almaLinux
+Penetration testing: kali linux, parrot os
+Lightweight linux: alpine, bookwarm, Puppy linux, lubuntu
+
+/ : root directory
+
+Top level directlry, the parent of all other directory.. Everything starts here..
+(Simialr to c:/)
+
+/root : Root user's home directory.. Each user we create in Linux os, will get a home directory.. 
+(Similar to C:\Users\Administraor)
+
+/home : The home directory for regular users.. (non-root)
+(Similar to C:\User\<avinash>/<test>)
+
+/bin : Binary Executables :
+Contains essential binary files used by all users (eg: ls, cp, mv)
+comands in /bin are available in single-user mode and are critical system operations.
+
+/boot: Boot loader files : Contains linux kernel, boot configurations and boot related files.
+
+/dev : Device files : Contains files that represent hardware devices like hard disks. 
+( /dev/sda, /dev/sdx)..
+(Windows : Device manager)
+
+/etc : Configuration files : Stores system wide configurations (i.e; /etc/passwd, /etc/resolv.conf)
+** Contains imp system settings and service management
+
+/usr : user Programs : Contains user level programs and libraries.
+(windows: c:\Program Files)
+
+/var : Variables Files : Contains data that changes freq.. (logs, database, webserver content)
+
+/tmp : Temporary directory
+
+/mnt : Mount points : Temp mount points..
+/media : Removable media
+/proc : process infroamtion : A virtual directory contains system informaiton i.e; RAM, CPU.. 
+/opt : Optional Software : optional 3rd party softwre
+lib/lib64 : Library files : (windows .dll).. contains essential shared libraries..
+
+================================
+
+
+Windows = Folder
+Linux = Directory
+
+cat /etc/os-release					--> Shows detailed OS information
+
+hostname							--> Displays the systems name
+
+uptime								--> Shows how long system is up and running, including users session count
+uptime -p
+
+man <command>						--> Shows manual/info related to the command we difine.
+man ls
+man pwd
+man cp
+
+history
+
+---
+
+ls							--> List files & directories in the current path
+ls -a						--> list everything inclusing hidden
+ls -ll						--> Long list 
+ls -l						--> 
+ls -la						--> List include hidden directories
+
+cd 							--> Change Directory
+cd ..						--> Moves up one directory level
+
+cd .ssh
+
+cat							--> Displays the entire content of the file
+more 						--> Displays the file content page by page.
+
+touch 						--> Helps to create a zero byte empty file
+touch avinash.txt
+
+touch avi{1..3}.txt			--> avi1.txt, avi2.txt avi3.txt
+
+mkdir 						--> make a directory (create a folder)
+
+which <ls>					--> shows binary files location
+
+
+mkdir <dir-name>			--> Creates a directory
+
+
+Copy Paste: cp
+
+cp							--> Command to perform copy and paste
+cp file1.txt folder/
+cp -R <Dir-1> <Dir-2>		--> Copy the directory to another directory
+
+Cut Paste : mv
+
+mv file.txt <directory>		--> Cut the file from source location and paste in destination directory
+mv <Dir-1> <Dir-2>			
+
+Same MV command can be used for "rename" operation aswell.
+
+mv wrongname.txt validname.txt
+ 
+========
+
+👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈 D: 03/02/2026 👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈
+
+
+rm 							--> Is to delete the individual file
+rm file.txt
+
+rm s*						--> Delete all the files name starts with "s"
+
+rmdir						--> Deletes the empty directory
+
+rm -r <DIR-NAME>			--> Deletes the non empty directory
+
+rm -rf <DIR-NAME>			--> Deletes the directory forcefully
+
+rm -rf *					--> Deletes everything from current location
+
+cat 						--> Displays all the file content
+more						--> Displays the file content page by page (space bar)
+
+head passwd					--> Displays top 10 lines only
+tail passwd					--> Displays last 10 lines only
+
+
+head -n 2 passwd				--> Displays top 2 lines only
+tail -n 2 passwd				--> Displays last 2 lines only
+
+sort passwd						--> Sort the file
+sort -r passwd					--> Reverse sort
+
+---
+
+grep : Global Regular expression print : helps to search text within files.
+
+grep "root" passwd					--> Look for "root" and displays that lines content
+
+grep -i "ROOT" passwd 				--> Insensitive : Search for "root", "Root", "ROOT"
+
+grep "word" file1.txt file2.txt
+
+grep -r "word" /path
+
+grep -r "word" /home/ec2-user		--> Searches the entire directory for the given "word"
+
+ps aux | grep "ec2-user"			--> Filters the output of ps aux to show lines that matching with the given word
+
+
+===========
+
+vim : Vi Improved : text editor for Linux Operating system.. 
+
+vi : The original editor..
+vim : Enhanced / modified vi editor.. 
+
+vim a.txt
+
+VIM has 2 modes:
+
+Command Mode: used for navigation, deletion and other file operations i.e; line numadd
+Insert Mode: Used for Entering the text into the file we opened.
+
+Command mode --> Insert Mode --> Press "i"
+Insert mode --> Command Mode --> Press "esc"
+
+
+:wq			--> Save and Quit from editor
+:q!			--> Quit without saving 
+
+o 			--> Open a new line at cursor
+x			--> Delete the character 
+
+dw			--> Delete the word from the cursor
+dd			--> Entire line deletes
+3dd			--> From cursor next 3 lines will be deleted
+100dd		--> 100 lines will be deleted
+
+:set number		--> Sets the number for the lines in vim editor
+:set nonumber	--> removes the line number
+
+nG			--> Jumps to the specific line number (replace n with number)
+
+======
+
+👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈 D: 04/02/2026 👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈
+
+Package Management : 
+
+RPM (Redhat package manager) : Outdated.. Installations, updates and removal of software packages on red-hat based systems.
+--> It has a limitation, Does not resolve dependencies automatically.
+
+install: rpm -ivh package.rpm
+rpm -e package_name
+
+--
+
+YUM (Yellowdog Updater Modified): Its wrapper to RPM, that can resolve dependencies and retrive packages automatically from repositories.
+
+yum update
+yum install <nginx/httpd/mariadb105>
+yum search <package-name>
+yum remove <package-name>
+
+yum install tree				--> Interactive installation
+yum install tree -y				--> Non-Interactive installation
+
+sudo yum install tree -y		--> When working as non-root user i.e; ec2-user
+
+---
+
+DNF (Dandified YUM) : Modern package manager that replaced YUM in newer linux distributions. 
+--> Faster dependency resolutions.
+--> Plugin based architecture
+
+sudo dnf update -y							--> Updates all the packages
+
+sudo dnf install <package-name> -y			--> Installs the package using dnf
+
+
+--> Sometimes, we may not find the required package in default repo available in our OS. We do have option to add service provider's repos. then we can continue with installation.
+ref: https://grafana.com/docs/grafana/latest/setup-grafana/installation/redhat-rhel-fedora/
+
+
+dnf search <package>
+dnf info <packagename>
+dnf remove <package> -y
+dnf list installed
+
+---
+
+sudo dnf install httpd -y
+
+systemctl status httpd				--> To check httpd service status
+systemctl start httpd				--> To start httpd service
+systemctl stop httpd				--> To stop the httpd service
+systemctl restart httpd				--> To restart the httpd service
+
+systemctl enable httpd				--> httpd service starts automatically after restart also.
+
+ERR_CONNECTION_TIMED_OUT : Traffic not reaching ec2 instance
+ERR_CONNECTION_REFUSED : No service available to serve the request.
+
+To serve your own content, Create files and place it under Documentroot path.
+
+DocumentRootPath: http: /var/www/html/
+
+Default httpd port: 80
+
+httpd configuration path: /etc/httpd/conf/
+File Name: httpd.conf
+
+at Line number: 47, you can see LISTEN.. Modify it to desired port.
+
+We need to restart the httpd package, as we perform conf changes. 
+
+http://65.0.86.38:8080/
+
+
+===========
+
+zip songs.zip song1.mp3 song2.mp3 song3.mp3			--> Zip 3 songs into songs.zip file
+zip songs.zip *										--> picks all files and added to zip
+
+zip -r name.zip directoryname/						--> Zip an entire folder inc. subdirectories
+
+unzip songs.zip
+
+--
+
+tar -cavf songs.tar.gz song1.mp3 song2.mp3 song3.mp3	--> create a zip folder with .tar.gz format
+tar -xzvf songs.tar.gz									--> Unzip the directory
+
+============
+
+👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈 D: 05/02/2026 👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈
+
+
+>		--> Redirecting (Overwrite existing data with new data)
+>> 		--> Appending (Adds new data to existing data)
+
+echo "hello" > greeting.txt
+echo "hello" >> greeting.txt
+
+=======
+
+top : shows realtime view of running processes, system load, CPU and memory usage.
+htop : shows top command output in better way. 
+
+ps		--> Shows the snapshot of current processes
+
+ps aux	--> Shows a detailed list of processes from all users.
+
+	a : shows process for all users
+	u : shows user/owner of the process
+	x : shows processes not attached to a terminal
+
+ps aux | grep sleep			--> displays sleep related processes
+ps aux | grep httpd
+ps aux | grep sshd
+
+kill <pid>					--> Sends a singal to terminal using process id. (signal 15 / SIGTERM)
+
+kill -9 <pid>				--> Send SIGKILL (signal 9) which forcefully stops the process. 
+**Use this option when "kill" is not working. 
+
+
+We do have other command to identify the process IDs using name.. 
+
+pidof httpd
+pidof sleep
+
+--> we can also use pkill command to kill the process using names.
+
+pkill sleep
+
+
+----
+
+Checks free memory / RAM : free -h
+check free Storage / disk : df -h
+
+free -m		--> Shows memory in mb
+free -s 5	--> run free command for every 5 seconds
+watch -n 2 free -h
+
+**htop gives cleaner UI based live usage information.
+
+----
+
+Find a file by name
+
+find / -name <file-name>
+
+sudo find / -name greeting.txt
+
+Make it case insensitive:	sudo find / -iname GReeting.txt
+
+sudo find /home/ec2-user/ -iname GReeting.txt
+
+sudo find . -iname GReeting.txt
+
+--
+
+Search file by file format
+
+Find directories named "logs" in "/"..
+sudo find / -type d -name logs
+
+Find all the files which contains format .logs
+sudo find / -type f -name "*.logs"
+
+---
+
+Install "mlocate" package for quick and easy search option. (latest feature)
+
+sudo dnf install mlocate
+sudo updatedb
+
+locate filename.txt
+
+---
+
+Whenever you are working on multiple linux instances, You may need to copy some data from one machine to another instance. 
+
+We can use "SCP" command.. THis works between linux instances only.. 
+To transfer data from Windows to Linux Instance we can use "winscp" tool..
+
+scp [option] source destination
+
+---
+
+From Local laptop to Remote ec2 instance.. 
+
+scp <filename> <username>@<instance-public-ip>:<path>
+
+scp demo.txt ec2-user@13.201.3.223:/home/ec2-user/
+
+TO pass the keypair 
+scp -i <keypair.pem> demo.txt ec2-user@13.201.3.223:/home/ec2-user/
+
+--
+
+TO get a file from ec2 instance to local..
+
+scp -i awar07-kp.pem ec2-user@13.201.3.223:/home/ec2-user/greeting.txt .
+
+---
+
+to transfer a folder using scp
+
+scp -i awar07-kp.pem -r foldername ec2-user@13.201.3.223:/home/ec2-user/greeting.txt .
+
+
+
+
+
+
