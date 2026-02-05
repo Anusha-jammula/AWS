@@ -398,7 +398,7 @@ scp demo.txt ec2-user@13.201.3.223:/home/ec2-user/
 
 TO pass the keypair 
 scp -i <keypair.pem> demo.txt ec2-user@13.201.3.223:/home/ec2-user/
-
+-i : Specifies the private key file for authentication.
 --
 
 TO get a file from ec2 instance to local..
@@ -409,7 +409,10 @@ scp -i awar07-kp.pem ec2-user@13.201.3.223:/home/ec2-user/greeting.txt .
 
 to transfer a folder using scp
 
-scp -i awar07-kp.pem -r foldername ec2-user@13.201.3.223:/home/ec2-user/greeting.txt .
+scp -i awar07-kp.pem -r foldername ec2-user@13.201.3.223:/home/ec2-user/
+
+ex: scp -i hyd.pem -r projectfunction ec2-user@40.192.37.98:/home/ec2-user/
+
 
 
 
