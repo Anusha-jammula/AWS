@@ -201,6 +201,12 @@ dd			--> Entire line deletes
 
 nG			--> Jumps to the specific line number (replace n with number)
 
+nG : (n is line number) : Takes our cusror to specific line number.
+ex: 7G --> Takes our cursor to line num 7.
+
+u (small u) : undo the last change.
+cntrl + r : Redo the undone changes.
+
 ======
 
 👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈 D: 04/02/2026 👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈
@@ -291,6 +297,27 @@ unzip songs.zip
 tar -cavf songs.tar.gz song1.mp3 song2.mp3 song3.mp3	--> create a zip folder with .tar.gz format
 tar -xzvf songs.tar.gz									--> Unzip the directory
 
+Sanity Check / Validation : We verify the status of the service or status of the resources affected with the operation we performed.
+
+
+--> ctrl+r --> type "services.msc" --> Startup type.
+
+---
+
+Apache configuration path : /etc/httpd/conf/httpd.conf
+nginx config path : /etc/nginx/nginx.conf
+
+---
+
+DocumentRootPath 
+Apache : /var/www/html/
+nginx: /usr/share/nginx/html/
+
+---
+
+telnet.?? 
+
+telnet 3.110.48.184 80
 ============
 
 👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈 D: 05/02/2026 👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈
@@ -305,7 +332,7 @@ echo "hello" >> greeting.txt
 =======
 
 top : shows realtime view of running processes, system load, CPU and memory usage.
-htop : shows top command output in better way. 
+htop : Interactive version of top command with color and better UI. or shows top command output in better way. 
 
 ps		--> Shows the snapshot of current processes
 
@@ -432,12 +459,36 @@ sudo adduser --no-create-home username
 sudo useradd -M username
 sudo useradd -r username
 
+What actually happens?
+
+The user anusha is created
+No home directory like /home/anusha is created ❌
+The user entry is added to:
+/etc/passwd
+/etc/shadow
+/etc/group
+
+
+How does the system behave without a home directory?
+
+If anusha logs in:
+$HOME variable may be empty or incorrect
+Shell may default to / or deny access
+Commands that expect a home directory (like .bashrc, .ssh) may fail
+
+
+Users without home directories are often created for:
+
+Service accounts (nginx, apache, docker, etc.)
+Application-specific users
+Restricted or system users
+Security-hardened environments
 
 sudo groupadd developers	--> Creates a group named developers
 
-sudo usermod -aG developers avinash		--> Adding avinash to developers group (secondary group for avinash)
+sudo usermod -aG developers avinash		--> Adding avinash to developers group (secondary group for avinash) (a:add, G:group)
 
-sudo gpasswd -d avinash developers		--> Removes the user from group named developers
+sudo gpasswd -d avinash developers		--> Removes the user from group named developers (d:delete)
 
 sudoers file location : /etc/sudoers
 
@@ -445,18 +496,15 @@ We have to use "visudo" command to edit
 
 sudo usermod -aG wheel avinash			--> Adding avinash to wheel group, so, he can use "sudo" to gain admin level permissions..
 
-
-Can i directly login as avinash user to this ec2 instance using avinash cred.
+---------
+To directly login as a user.. You need to edit the sshd configuration.. Enable "Password authentication to yes".
 
 ssh avinash@43.205.178.165
 avinash@43.205.178.165: Permission denied
 
 sshd configuration path: /etc/ssh/sshd_config
-
 sudo vim /etc/ssh/sshd_config
-
-set passwordauthentication to yes
-
+set PasswordAuthentication to Yes			#Line no: 65
 then Restart the service : sudo systemctl restart sshd
 
 ---
@@ -493,7 +541,7 @@ chmod 700 file.txt
 chmod 400 <keypair>.pem
 
 
-getfacl avinash.txt 
+getfacl avinash.txt   --> getfacl: used to display the file name, owner, the group, and he Access Control Lists (ACLs) of files and directories
 # file: avinash.txt
 # owner: avinash
 # group: avinash
