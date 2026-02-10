@@ -1,0 +1,365 @@
+
+
+
+EC2 : Elastic Compute Cloud : We cna launch and run servers.. 
+
+
+EC2 is a region specific service..!! Chose a region and stick to it. : ap-south-1
+
+Server : 
+
+On-Prem server provisioning and configuration is time taking process.. in AWS ec2, we cna launch and connect to the server ver very clickly.. ==> Go Global in minutes
+pay-as-you-go : Pay for the instance / server you use. (1 ht -> 1 hr bill)
+
+$$$ --> Server 
+
+Server = box = VM (Virtual Machine) = Instance = Azure VM = gcp compute engine
+
+On-Demand ec2 instances : No contract.. Pay for the usage based on Hourly.. We have flexibility to test lot of configuragtions.. 
+
+
+---
+
+Reserved ec2 instance / RI : We can go with a contract with AWS for 1 yr period or 3 yrs period.. 
+
+Standard RI : We cannot change the configuration during the commited period.. 
+Convertable RI : We can change the configurations during the commited period.. 
+Scheduled RI : For a period, for repeatative workload, we cna choose this type.. ( 1 year ==> Mon-fri / weekly 40 hrs)
+
+Pricing options : 
+Full Upfront : Pay full amount now and get the server.. 
+Partial Upfront : Pay partial amount as one time (varies from 30-60%).. AWS reduses the instance hourly cost.. 
+Based on usage, aws will cost us with redused hourly cost.. 
+No Upfront : No need to pay anything.. pay everything on monthly basis only.. 
+
+--> you can register as seller and sell your instance at lower cost at marketplace. 
+
+---
+
+
+Instance Launch process : 
+
+Step 1 : Allocate tags (name, project, cost center, os)
+
+Step 2 : Choose an AMI (Operating System)
+
+windows, Amazon linux, ubuntu, suse, fedora, debian, kali... 
+
+Step 3 : Instance type (Pre-Configured CPU and Memory combinations)
+
+t3.micro
+
+Step 4 : Create a keypair and store it in a secured location (desktop --> keypair)
+
+
+keypair --> Encryption and decryption with public and private key.. 
+
+PublicKey --> AWS keeps it and locks the instance with public key
+Privatekey --> it downloads automatically when we create a keypair.. If you wqant to connect to ec2 instance, you need to use this to unlock the publickey. 
+
+Step 5 : network Settings
+
+Firewall : Helps to filter the traffic.. 
+
+Linux : SSH protocol (Secure Shell) : Port 22
+Windows : RDP Protocol (Remote Desktop Protocol) : Port 3389
+http : Port 80
+https : Port 443
+
+* Make sure you open SSH for Anywhere for today.. *Dont mention this in your interviews.
+
+Step 6 : Storage ..
+
+EBS : for Storage : Linux min 8 gb
+
+
+Tags : Filtering (Project-1 / Project-2) 
+--> OS Patches (SSM) 
+--> Cost (Cost and Usage Report)
+
+=======
+
+D: 30/01/2026
+
+Enable SSH in your laptop.. 
+navigate to Settings > Apps > Apps & features > Optional features, click Add a feature, select OpenSSH Client
+
+=============
+
+Inbuilt CMD
+
+--> navigate to the folder, click on navigation bar --> type "cmd" --> click enter.. verify keypair (dir) --> 
+
+ssh -i <your-keypair-name.pem> <user-name>@<public-ip>
+
+ssh -i keypair.pem ec2-user@202.152.23.23
+
+ssh -i "awar07-kp.pem" ec2-user@ec2-52-66-243-120.ap-south-1.compute.amazonaws.com
+
+============
+
+git
+
+Navigate to the locaiton you have your keypair.. right click and choose "Open git bach here" and use the same ssh comamnd to connect..
+
+ssh -i "awar07-kp.pem" ec2-user@ec2-52-66-243-120.ap-south-1.compute.amazonaws.com
+
+
+===========
+
+Putty: (Putty dont support .pem format directly)
+We have 2 options..
+Option 1 : Create a .ppk while launching your ec2 instance
+Option 2 : Convert .pem to .ppk and use it
+
+
+=======
+
+MAC: WARNING: UNPROTECTED PRIVATE KEY FILE
+
+chmod 400 <keypair-name>
+
+
+WINDOWS : WARNING: UNPROTECTED PRIVATE KEY FILE
+
+
+icacls your-keypair.pem
+icacls your-keypair.pem /inheritance:r				--> Remove inheritance permissions
+icacls your-keypair.pem /grant:r "$($env:USERNAME):(R)"		--> grant read permisisons only your working user
+icacls your-keypair.pem
+whoami			--> identify your username
+
+icacls your-keypair.pem /remove "Users"
+icacls your-keypair.pem /remove "Everyone"
+icacls your-keypair.pem /remove "Authenticated Users"
+
+==========
+
+👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈 D: 09/02/2026 👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈
+
+
+EBS : Elastic Block Storage : 
+
+SSD : 
+HDD : 
+Magnetic : 
+
+How do we measure storage performance: IOPS (Input and Output operations per second)
+
+Block Size : The size of the data block being read / written. 4 KB / 8 KB
+latency : The time taken to process a single I/O request. (Queue latency and Disk latency)
+Throughput : The rate at which data is transferred, we measure this in MB/S..
+
+IOPS = Throughput x 1024 / Blocksize
+
+128 mb/s
+block size = 4 kb
+IOPS = 128 x 1024 / 4 = 32768 IOPS
+
+---
+
+https://docs.aws.amazon.com/ebs/latest/userguide/ebs-volume-types.html
+
+General Purpose SSD (gp3 / gp2) : Most common workloads.. 
+Low latency
+Min 1 GiB, Max: 16 TiB
+Max IOPS: 16,000
+
+gp2 : 3 IOPS per 1 GiB (1:3 Ratio) but with min of 100 IOPS
+gp3 : Allows us to specify our required iops count. It also supports upto 64 TiB
+
+---
+
+Provisioned IOPS SSD (io1 / io2) : Workload that requires specific IOPS count.. Any workload that needs more than 16,000 IOPS.. Highest performance volume type.. (I/O intensive workload / database)..
+Min: 4 GiB, Max: 16 TiB 	(io2 block express: 64 TiB)
+Max IOPS : 64,000
+
+---
+
+HDD : Dont support to run root volume.. We cant use this type to run os.
+
+Throughput Optimised HDD (st1) : Stuitable for big data, data warehousing and log processing kind of workload..
+Min: 125 giB, max: 16 TiB
+Max Throughput: 500 MB/s
+
+Cold HDD (sc1) : Suitanle for less freq accessed data.
+lower cost than ST1.
+Min: 125 giB, max: 16 TiB
+Max Throughput: 250 MB/s
+
+----
+
+Magnetic (standard) : low cost storage solutions for less freq accessed data.. 
+Min: 1 GiB, max: 1Tib
+
+=========
+
+
+
+lsblk			--> List block based devices
+df -Th			--> Lists the volumes detected/used by OS 
+           -- (to check os is detected attached volume , to detect the volumes by os 
+           -- we have to create directory like mkdir newvol 
+            -- then add attached volume like sudo mount /dev/nvme1n1 newvol(created directory name)
+            -- if any fs is not in volume it shows some error like bad fs then we have to check 
+            -- if any file system exist in volume or not like sudo file -s /dev/nvme1n1 
+            -- if you see output like data that means there is no file system in volume
+            -- for one volume we have to write one file system only like mkfs -t xfs /dev/nvme1n1 
+            -- finally mount to vol like sudo mount /dev/nvme1n1 newvol
+            -- then check file system like sudo file -s /dev/nvme1n1
+            -- finally do system Reboot like sudo init 6
+            -- all these are make the volume temp mount
+            ----- then follw step 6 onwards)
+
+In AWS console, create a volume in same AZ as your instance and attach it to ec2 instance.
+
+
+Step 1 : Run "lsblk" command and get the volume name.
+
+nvme1n1
+Full path: /dev/nvme1n1  --> to verify created volume
+
+Does this volume has a valid file system.?
+This is a data manageemtn layer.. organizes, stores, retrives and protects data..
+windows: FAT, NTFS, ReFs
+Linux: ex3, ext4, xfs(widely used) 
+
+
+Step 2 : verify file system presence
+sudo file -s /dev/nvme1n1
+
+data: no file system
+
+Step 3 : written the file system, if no file system available. type: xfs
+sudo mkfs -t xfs /dev/nvme1n1   -->t : type)
+
+Step 4 : create a directory to mount the volume
+mkdir newvol
+
+Step 5; Mount the volume to dir
+sudo mount /dev/nvme1n1 newvol/
+
+The above 5 steps, make the volume temp mount, Goes if we reboot the system.. To make it perm mount.. add volume entry to /etc/fstab file
+
+Step 6 : Grab the temp mount entry info from "/etc/mtab" file and write it to "/etc/fstab"
+
+sudo cat /etc/mtab
+
+
+/dev/nvme1n1 /home/ec2-user/newvol xfs rw,seclabel,relatime,attr2,inode64,logbufs=8,logbsize=32k,sunit=8,swidth=8,noquota 0 0
+
+
+sudo vim /etc/fstab
+
+
+=======================
+
+to unmount device
+step 1 : Remove file system which is below content from sudo vim /etc/fstab
+
+/dev/nvme1n1 /home/ec2-user/newvol xfs rw,seclabel,relatime,attr2,inode64,logbufs=8,logbsize=32k,sunit=8,swidth=8,noquota 0 0
+
+step 2 : unmount /dev/nvme1n1
+
+==================================
+To increase the storage size, Increase the size at aws console first, then os level 
+
+you need a small utility name: xfsprogs
+
+sudo xfs_growfs -d /home/ec2-user/newvol
+
+---
+
+To Increase the root volume partition size.. 
+
+sudo growpart /dev/nvme0n1 1
+
+sudo xfs_growfs -d / --> when you modify root we should REBOOT the instance liku sudo init 6
+
+---
+
+You have an unencrypted volume, you are asked to encrypt it.. How can you do it.??
+
+Choose the unencry volume --> Create a snapshot --> From Snapshot, create a volume (enable Encryption)
+
+---------
+
+Fix same UUID issue:
+
+sudo mount /dev/nvme2n1 testvol/			--> Error
+
+lsblk -f --> to check uuid
+
+zero out the log: 
+sudo xfs_repair -L /dev/nvme2n1
+
+sudo xfs_admin -U generate /dev/nvme2n1 --> to generate new UUID for vol wich is created from vol snapshot
+
+==========================================================================================
+
+👈👈👈👈👈👈👈👈👈👈👈👈👈 D: 10/02/2026 👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈
+Snapshot : backup copy of an EBS volume. 
+
+Snapshots are point in time copies. (If you create a snapshot at 09:30, whatever the files you have in volume at 09:30, only those will be backedup).. 
+
+AWS uses s3 as backend platform for snapshots.
+
+--> Can we see what data we have inside the snapshot.?Ans; no..
+--> AWS uses incremental backup mechanism (in backend).. We just need most recent copy to restore.. multiple copies not required..
+--> If a volume is encrypted, and wif we create a snapshot, snapshot also enabled with encryption defualtly.
+
+--> If any snapshot if encrypted with "default encryption key", we cannot share it with other aws accounts.
+--> If any snapshot if encrypted with "custom encryption key", we can share it with other aws accounts.. but we need to share the encryption key also.
+
+
+/dev/nvme1n1
+
+sudo file -s /dev/nvme1n1
+
+sudo mkfs -t xfs /dev/nvme1n1
+
+mkdir 1avol
+
+sudo mount /dev/nvme1n1 1avol/
+
+
+------------
+
+
+DLM : Data Lifycle Manager : Designed to automate the snapshot creation. Based on environment or org/proj requirement, we configure this. (RTO / RPO)
+
+RTO (Recovery Time Objective)
+Simple Meaning: Your downtime limit.
+The Question: "How long can we afford to be offline?".
+Focus: Recovery speed.
+Example: If your RTO is 2 hours, you must have your systems back up and running within 2 hours of a crash to avoid serious business damage. 
+
+2. RPO (Recovery Point Objective)
+Simple Meaning: Your data loss limit.
+The Question: "How much data can we afford to lose?".
+Focus: Backup frequency.
+Example: If your RPO is 1 hour, you must back up your data at least every hour. If the system crashes, you might lose the last 59 minutes of work, but you won't lose more than an hour
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
