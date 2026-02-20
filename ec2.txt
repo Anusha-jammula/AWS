@@ -17,7 +17,6 @@ Server = box = VM (Virtual Machine) = Instance = Azure VM = gcp compute engine
 
 On-Demand ec2 instances : No contract.. Pay for the usage based on Hourly.. We have flexibility to test lot of configuragtions.. 
 
-
 ---
 
 Reserved ec2 instance / RI : We can go with a contract with AWS for 1 yr period or 3 yrs period.. 
@@ -135,7 +134,7 @@ icacls your-keypair.pem /remove "Authenticated Users"
 
 ==========
 
-👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈 D: 09/02/2026 👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈
+D: 09/02/2026
 
 
 EBS : Elastic Block Storage : 
@@ -197,19 +196,7 @@ Min: 1 GiB, max: 1Tib
 
 
 lsblk			--> List block based devices
-df -Th			--> Lists the volumes detected/used by OS 
-           -- (to check os is detected attached volume , to detect the volumes by os 
-           -- we have to create directory like mkdir newvol 
-            -- then add attached volume like sudo mount /dev/nvme1n1 newvol(created directory name)
-            -- if any fs is not in volume it shows some error like bad fs then we have to check 
-            -- if any file system exist in volume or not like sudo file -s /dev/nvme1n1 
-            -- if you see output like data that means there is no file system in volume
-            -- for one volume we have to write one file system only like mkfs -t xfs /dev/nvme1n1 
-            -- finally mount to vol like sudo mount /dev/nvme1n1 newvol
-            -- then check file system like sudo file -s /dev/nvme1n1
-            -- finally do system Reboot like sudo init 6
-            -- all these are make the volume temp mount
-            ----- then follw step 6 onwards)
+df -Th			--> Lists the volumes detected/used by OS
 
 In AWS console, create a volume in same AZ as your instance and attach it to ec2 instance.
 
@@ -217,7 +204,7 @@ In AWS console, create a volume in same AZ as your instance and attach it to ec2
 Step 1 : Run "lsblk" command and get the volume name.
 
 nvme1n1
-Full path: /dev/nvme1n1  --> to verify created volume
+Full path: /dev/nvme1n1
 
 Does this volume has a valid file system.?
 This is a data manageemtn layer.. organizes, stores, retrives and protects data..
@@ -231,7 +218,7 @@ sudo file -s /dev/nvme1n1
 data: no file system
 
 Step 3 : written the file system, if no file system available. type: xfs
-sudo mkfs -t xfs /dev/nvme1n1   -->t : type)
+sudo mkfs -t xfs /dev/nvme1n1
 
 Step 4 : create a directory to mount the volume
 mkdir newvol
@@ -254,14 +241,6 @@ sudo vim /etc/fstab
 
 =======================
 
-to unmount device
-step 1 : Remove file system which is below content from sudo vim /etc/fstab
-
-/dev/nvme1n1 /home/ec2-user/newvol xfs rw,seclabel,relatime,attr2,inode64,logbufs=8,logbsize=32k,sunit=8,swidth=8,noquota 0 0
-
-step 2 : unmount /dev/nvme1n1
-
-==================================
 To increase the storage size, Increase the size at aws console first, then os level 
 
 you need a small utility name: xfsprogs
@@ -270,11 +249,11 @@ sudo xfs_growfs -d /home/ec2-user/newvol
 
 ---
 
-To Increase the root volume partition size.. 
+To Increase the room volume partition size.. 
 
 sudo growpart /dev/nvme0n1 1
 
-sudo xfs_growfs -d / --> when you modify root we should REBOOT the instance liku sudo init 6
+xfs_growfs -d /
 
 ---
 
@@ -288,16 +267,15 @@ Fix same UUID issue:
 
 sudo mount /dev/nvme2n1 testvol/			--> Error
 
-lsblk -f --> to check uuid
-
 zero out the log: 
 sudo xfs_repair -L /dev/nvme2n1
 
-sudo xfs_admin -U generate /dev/nvme2n1 --> to generate new UUID for vol wich is created from vol snapshot
+sudo xfs_admin -U generate /dev/nvme2n1
 
 ==========================================================================================
 
-👈👈👈👈👈👈👈👈👈👈👈👈👈 D: 10/02/2026 👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈👈
+D: 10/02/2026
+
 Snapshot : backup copy of an EBS volume. 
 
 Snapshots are point in time copies. (If you create a snapshot at 09:30, whatever the files you have in volume at 09:30, only those will be backedup).. 
@@ -341,17 +319,453 @@ Focus: Backup frequency.
 Example: If your RPO is 1 hour, you must back up your data at least every hour. If the system crashes, you might lose the last 59 minutes of work, but you won't lose more than an hour
 
 
+==============
+
+
+D: 11/02/2026
+
+Golden Amazon Machine Image (GAMI) : Custom OS
+
+Base Instance --> httpd, custom web content, user add, password auth enable, tree, 2gb addl volume... --> Checklist --> Reboot and verify --> Sanity check --> Then create a GoldenAMI
+
+
+13.200.251.170
+13.201.13.166		--> Current IP
+
+EIP : Elastic IP Address : We can allocate a dedicated IP Address to instance. 
+In general, if we perform stop and start operqation Instance auto allocated public ip will change.
+
+
+
+We always enbale these 2 options to protect our resources from accidental deletion/stop operations
+Stop Protection : 
+Termination Protection : 
+
+Shutdown behaviour : What should happens to the ec2 instance when we initialise the shuotdown at OS level. Default option is "Stop"..  
+
+==================
+
+D: 12/02/2026
+
+
+EFS : Elstic File system : We cna use efs to provide central storage solution for multiple ec2 instances. 
+We can span efs to multiple AZs ec2 instance also.
+
+EFS works with NFS v4.1 protocol.
+NFS Supports linux OS only, THat means EFS supports only linux Instances.
+For windows, We have another service "FSx", FSx works with SMB (Server Message Block) Protocol.
+
+EFS has unlimited storage.
+No Pre-provisioning required
+
+
+Step 1 : Create a Security group for your ec2 instance
+
+sg-01f2aff5e6ac57dc1 - Web-SG		(Opened port http/80 and ssh/22)
+
+
+Step 2 : First create a SG for EFS. Port : 2029.. Always prefer Option 4
+
+Where we need to open this port.?? 
+Option 1 : Open for everyone (least Secured)		: 0.0.0.0/0
+Option 2 : Open for 2 ec2 instance Private IPs		: web-1 pvt ip & web-2 pvt ip
+Option 3 : Open for entire VPC network				: 172.31.0.0/16
+
+Option 4 : Open for EC2 instance Security group. (More Secured and AWS suggested best option)**
+Open port 2029 and set destination as "Web-SG" (Pipeline Mechanism).. (Data will be encrypted automatically)
+ 
+Option 5 : Attach "Default SG" for your EFS and EC2 instances.. Both can communicate.
+
+--------
+
+#!/bin/bash
+sudo dnf install httpd -y
+sudo systemctl start httpd
+sudo systemctl enable httpd
+
+DocumentRootPath: /var/www/html/
+
+----
+
+sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport fs-0d0e78183133de983.efs.ap-south-1.amazonaws.com:/ /mount-point
+
+sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport fs-0d0e78183133de983.efs.ap-south-1.amazonaws.com:/ /var/www/html/
+
+
+ec2 : NFS..??? SSH..?? HTTP..??
+EFS : 2049.. 
+
+---
+
+
+Scaling : 
+
+Vertical Scaling : Adding more resources/components (CPU/memory/ENI) to existing instance.. 
+
+t3.micro		--> Not working as expected --> Cloudwatch --> t3.micro --> t3.small
+
+--> We need to stop the ec2 instance to perform vertical scaling.
+
+
+--> Change Request / CRQ --> CAB meeting (Change Advisory Board) (Prod --> 1 week / Non-prod --> 2 week)
+
+Dev / QA / SIT --> We can do it (1 week observe)
+UAT --> CAB --> 
+PRD --> CAB --> UAT CRQ Number --> prod Approve (2 weeks gap)
+
+e-crq --> Emergency crq 
+
+Is this implemnted in lower env.?
+Cost change
+Downtime required
+Client informed
+change window / When you planning perform
+Pre-Implementation
+Actual implementation
+Post-Implementation
+Validations / Sanity Check
+Rollback plan
+
+Tasks list : db, support, db, aws..
+
+====================================
+
+D: 13/02/2026
+
+Cloudwatch : Monitoring service.. Observability (o11y).. 
+This is enabled for most of the aws services we use.. 
+
+
+we have 2 types of monitorings.
+
+1. Basic Monitoring : 5 min
+2. Detailed monitoring : 1 Min
+
+EC2 : We can monitor CPU, Disk and Network metrics.. We cannot monitor "memory/RAM" usage using default cloudwatch metrics.. 
+
+We can install "CW Agent" inside ec2 instance and we can monitor memory and disk free space.. 
+
+--> We can configure alarm based on the metrics and we can invoke services i.e; SNS (simple notification service) or we can take automated actions on the resources.. 
+
+CPU >=90 for 300 seconds --> reboot
+CPU <=20 for 300 seconds --> stop
+
+To monitor memory usage or storage (free storage) or to get our application logs from ec2 to aws.. We need to install Cloudwatch agent.. 
+
+
+============
+
+D: 16/02/2026
+
+EventBridge : 
+
+EventDriven Processes : 
+
+EC2 Instance --> Stop / Reboot / terminate --> Alert (Production Support) 
+
+IAM User created (iam.amazonaws.com) --> "Createuser", "DeleteUser"  --> SNS
+(Cloudtrail)
+
+---
+
+Scheduled Processes : 
+
+Dev / QA - India Based Devs : (09 AM - 9 PM) 
+
+09 AM Instance start
+09 PM Instance Stop
+
+===
+
+For IAM realted activities, We can directly search, but Eventbrodge always checks for the events inside a management trail.. 
+Create a Management trail in Cloudtrail and perform the IAM releated activity.
+
+---
+
+Cron Generation help : https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-scheduled-rule-pattern.html
+
+
+=========
+
+Any IAM user wil have 2 types of accesses.
+
+AWS management console access : username, password and Sign-url --> browser
+Programatic Access : Accesskey and SecretAccesskey	--> CLI
+
+Programatic Access is not much secured.
+Cred stores in Plain text format. it wont rotate.
+
+c:/users/administaror/.aws --> config and credentials
+~/.aws --> config and credentials
+
+Navigate to "https://aws.amazon.com/cli", downlaod and install CLI
+
+
+aws --version			--> TO identify installed aws cli version
+
+aws configure
+AccesskeyId : 
+SecretAccesskey: 
+DefualtRegion : ap-south-1
+DefaultOutput : json/table
+
+
+aws sts get-caller-identity			--> TO see / fetch currently configured user info
+
+aws configure list					--> list the currently configure profile
+
+aws configure list-profiles
+
+aws iam list-users
+aws ec2 describe-instances --region eu-north-1
+
+--
+
+aws configure --profile uat
+aws configure --profile prd
+
+aws s3 ls							--> List the buckets from deafult profile
+aws s3 ls --profile <uat>			--> List the buckets from uat profile
+
+aws s3 mb s3://aviz6-cli-test2
+
+aws s3 ls --debug					--> generate logs with debug
+
+aws servicename command arguments
+
+
+aws iam create-user --user-name aviz6-cli
+
+aws iam attach-user-policy --user-name aviz6-cli --policy-arn arn:aws:iam::aws:policy/IAMReadOnlyAccess
+
+
+aws ec2 describe-instances --region ap-south-1
+
+Search Instance by Name tag
+aws ec2 describe-instances --filters "Name=tag:Name,Values=*Jenkins-Server*" --output table
+
+Search for only running ec2 instance
+aws ec2 describe-instances --filters "Name=instance-state-name,Values=running" --output table
+
+Search using Private IP:
+aws ec2 describe-instances --filters "Name=private-ip-address,Values=172.31.22.18" --output table
+
+
+--
+
+aws iam list-users --query "Users[*].[UserName, CreateDate]" --output table
+
+aws ec2 describe-instances		--> PrivateIP
+
+aws ec2 describe-instances --query 'Reservations[*].Instances[*].PrivateIpAddress' --output text
+
+[*]	--> Select all elements
+[0] --> First element
+
+
+aws iam list-access-keys --username USERNAME  --query 
+
+
+aws s3 sync c:/desktop/folder/ s3://avizway/lmsdata/
+
+
+===========
+
+D: 18/02/2026
+
+Roles : helps to access aws resources securely, without storing accesskey/secretaccess keys.
 
 
 
 
+below policy is required at role to connect to instance using SSM Instance connect option: 
+AmazonSSMManagedInstanceCore
+
+
+#!/bin/bash
+sudo dnf install httpd -y
+sudo systemctl start httpd
+sudo systemctl enable httpd
+sudo echo "<h1>THis is created by SSM RUn COmmand Demo </h1>" >> /var/www/html/index.html
+sudo dnf install tree -y
+sudo useradd avinash
+sudo usermod -aG wheel avinash
+
+
+=======
+
+D: 19/02/2026
+
+
+Security group : it's a firewall, configured at instance level.
+** We can add multiple SGs for one ec2 instance
+** There is no option to DENY the traffic, Only allow is possible.
+** Chnages to the SG takes effect without any delays.
+
+Inbound = Traffic coming INTO your ec2 instance : ssh: 22, http:80, https:443, mysql:3306, mssql:1433
+Outbound = Traffic going OUT from your EC2 Instance : 0.0.0.0/0
+
+Why we mostly open outbound for anywhere.?
+--> To install anything, we get packages from internet.
+--> To access webpages
+--> To call external APIs
+--> Send logs to cloudwatch
+--> Access s3 from instance
+
+stateful : SG are stateful. Whatever traffic allowed inside, that automatically allowed outside. We really no need to worry about oputbound rules (0.0.0.0/0). 
+
+Stateless : We need to explicitly allow inbound and outbound traffic. VPC --> NACLs
+
+---
+
+USERDATA: we can pass commands only once, when instance launched for the first time.  These comamnds runs as "root" user.
+We can verify logs at : /var/log/cloud-init-output.log
+size should be less than 16KB.. 
+Put inside an s3 bucket and pass it.
+
+---
+
+METADATA: We can use this option to get data about our ec2 instance (When we are inside the OS).
+
+To access metadata, enable metadata option. 
+v1  : we can access info with metadata url. (less secured - Chances for SSRF attack (server side request forgery))
+v2  : It needs token to access metadata.
 
 
 
+curl http://169.254.169.254/latest/meta-data/network/interfaces/macs/02:34:5d:11:55:43/vpc-id
+
+
+ami-id
+ami-launch-index
+ami-manifest-path
+block-device-mapping/
+events/
+hostname
+identity-credentials/
+instance-action
+instance-id
+instance-life-cycle
+instance-type
+local-hostname
+local-ipv4
+mac
+managed-ssh-keys/
+metrics/
+network/
+placement/
+profile
+public-hostname
+public-ipv4
+public-keys/
+reservation-id
+security-groups
+services/
+
+---
+
+generate a token 
+
+TOKEN=$(curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
+
+AQAEAHg2t2MnS6tL7oxrRIPUo6ava3_kBFBC7EA72txj-B_I1nOWWQ==
+
+curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/
+
+---
+
+
+SPOT Instances : We have to bid our price against aws pricing. 
+Our quoted price is equal or higher than aws pricing, aws allocates the instance.
+
+Due to demand, if price increase, AWS terminates our ec2 instance. 
+Suggested to run instance where we dont have any effect, if instance terminated suddely.
+
+
+if price not changed, you terminated your instance, you need to pay full price
+
+AWS terminated your instance, due to demand/higher price, You get charged for full hours, not for partial hours.
+
+---
+
+Savings Plan : This is a billing commitment. 
+"I will spend $2 per hour on ec2 compute capacity for 1 year"
+
+--> We can change instance type (cpu/memory), AZs. 
+
+on-demand, spot and reserved instance ==> We are reserving the capacity.
+
+---
+
+D: 20/02/2026
+
+
+Tenancy : 
+
+Multi/Shared-Tenancy : One hardware can be shared with multiple customers.
+
+Single/Dedicated-Tenancy : hardware specifically allocated to only one customer.
+
+
+---
+
+3/3 status checks
+
+Instance status check : reboot / inspect logs / ssm connect / root volume replacement
+System status check : stop and start / contact aws
+Storage/EBS status check : AWS responsibility
+
+---
+
+placement groups : 
+
+Cluster PG : all instances runs on same h/w.. ultra low latency and low network throughput..
+if underlying h/w fails, all instances get affected.
+
+Partition PG : we will have partitions, every partition will have its own power and network connectivity.. 
+
+Spread PG : every instance runs on a seperate hardware..
+
+---
 
 
 
+Application LB : Layer 7 : http, https : 
 
+Network LB : Layer 4 : TCP, UDP, TLS : It wont inspect the request..
+
+Classic LB : outdated..
+
+Gateway LB : 
+
+Applicaiton		--> Application : Layey 7 : (URL (/login, /api) / Hostname / Http headers, cookies) (URL, Host, Header)
+Presentation
+Session layer
+Transport layer	--> Network LB : Layer 4 : source ip, source port, dest ip, protocol (TCP/UDP) (IP + Port)
+Network layer
+Data link
+Physical layer
+
+
+NLB can handle millions of requests per second. 
+Operating at the connection level, Network Load Balancers are capable of handling millions of requests per second securely while maintaining ultra-low latencies.
+
+
+1A -
+
+#!/bin/bash
+sudo dnf install httpd -y
+sudo systemctl start httpd
+sudo systemctl enable httpd
+sudo sh -c 'echo "<h1> This is my ap-south-2A instance...</h1>" >> /var/www/html/index.html'
+
+1B - 
+
+#!/bin/bash
+sudo dnf install httpd -y
+sudo systemctl start httpd
+sudo systemctl enable httpd
+sudo sh -c 'echo "<h1> This is my ap-south-2B instance...</h1>" >> /var/www/html/index.html'
 
 
 
